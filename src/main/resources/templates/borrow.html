@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书馆借书系统</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "微软雅黑",sans-serif;
+        }
+        body {
+            background: #f0f2f5;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #1967d2;
+            font-size: 28px;
+        }
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #cce0f5;
+            margin-bottom: 20px;
+            border-left: 5px solid #2196f3;
+        }
+        h2 {
+            margin-bottom: 18px;
+            color: #2196f3;
+            font-size: 19px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #444;
+        }
+        input, select {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid #b3d8f8;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: #2196f3;
+        }
+        button {
+            background-color: #2196f3;
+            color: white;
+            padding: 10px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        .book-list {
+            list-style: none;
+        }
+        .book-item {
+            padding: 11px;
+            border-bottom: 1px solid #e8f2ff;
+            color: #333;
+        }
+        .borrowed {
+            color: #0288d1;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+<h1 class="title">图书馆借书系统</h1>
+
+<div class="container">
+    <h2>借书登记</h2>
+    <form id="borrowForm">
+        <div class="form-group">
+            <label>姓名</label>
+            <input type="text" required>
+        </div>
+        <div class="form-group">
+            <label>学号/工号</label>
+            <input type="text" required>
+        </div>
+        <div class="form-group">
+            <label>选择图书</label>
+            <select required>
+                <option value="">请选择图书</option>
+                <option>红楼梦</option>
+                <option>西游记</option>
+                <option>三国演义</option>
+                <option>水浒传</option>
+                <option>Python编程</option>
+            </select>
+        </div>
+        <button type="submit">确认借书</button>
+    </form>
+</div>
+
+<div class="container">
+    <h2>可借图书</h2>
+    <ul class="book-list">
+        <li class="book-item">红楼梦</li>
+        <li class="book-item">西游记</li>
+        <li class="book-item">三国演义</li>
+        <li class="book-item">水浒传</li>
+        <li class="book-item">Python编程</li>
+    </ul>
+</div>
+
+<div class="container">
+    <h2>已借书籍</h2>
+    <ul class="book-list" id="borrowedList">
+        <li class="book-item borrowed">暂无借书记录</li>
+    </ul>
+</div>
+
+<script>
+    const form = document.getElementById('borrowForm');
+    const borrowedList = document.getElementById('borrowedList');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = form[0].value;
+        const book = form[2].value;
+        borrowedList.innerHTML = `<li class="book-item borrowed">${name} 已借阅：${book}</li>`;
+        alert('借书成功！');
+        form.reset();
+    });
+</script>
+</body>
+</html>

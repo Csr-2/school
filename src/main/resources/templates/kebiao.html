@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>课表查询</title>
+</head>
+<style>
+    /* 最基础的样式，保证干净整洁，不复杂 */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    /* 主要卡片容器 */
+    .container {
+        max-width: 1100px;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        padding: 20px 24px 30px 24px;
+        transition: all 0.2s;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 6px;
+        letter-spacing: -0.3px;
+    }
+
+    .sub {
+        color: #475569;
+        border-left: 4px solid #3b82f6;
+        padding-left: 12px;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+    }
+
+    /* 查询控制栏：非常基础的flex布局 */
+    .query-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        background: #f8fafc;
+        padding: 18px 20px;
+        border-radius: 24px;
+        margin-bottom: 28px;
+        align-items: flex-end;
+        border: 1px solid #e2e8f0;
+    }
+
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        min-width: 140px;
+    }
+
+    .field-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #334155;
+    }
+
+    select, button {
+        background: white;
+        border: 1px solid #cbd5e1;
+        padding: 8px 14px;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-family: inherit;
+        color: #0f172a;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+
+    select {
+        cursor: pointer;
+        min-width: 140px;
+    }
+
+    select:hover, button:hover {
+        border-color: #3b82f6;
+    }
+
+    button {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        font-weight: 500;
+        padding: 8px 26px;
+        margin-top: 6px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    button:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    button:active {
+        transform: translateY(1px);
+    }
+
+    /* 课表展示区域 - 最简单的表格 */
+    .timetable-wrapper {
+        overflow-x: auto;
+        border-radius: 20px;
+        border: 1px solid #e9eef3;
+        background: white;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        min-width: 600px;
+    }
+
+    th {
+        background: #f1f5f9;
+        padding: 14px 10px;
+        text-align: center;
+        font-weight: 600;
+        color: #1e293b;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    td {
+        padding: 14px 8px;
+        text-align: center;
+        border-bottom: 1px solid #ecf3fa;
+        color: #0f172a;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+    .result-highlight{
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    footer {
+        text-align: center;
+        margin-top: 24px;
+        font-size: 0.7rem;
+        color: #94a3b8;
+    }
+
+    @media (max-width: 640px) {
+        .container {
+            padding: 16px;
+        }
+        .field-group select, .field-group button {
+            width: 100%;
+        }
+        .query-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        button {
+            margin-top: 10px;
+        }
+    }
+</style>
+<body>
+<div class="container">
+    <h1>📖 课表查询</h1>
+    <div class="sub">选择星期 & 节次 / 上下节 | 点击查询显示课程</div>
+
+    <!-- 查询区域：最简单的星期+节次选择 -->
+    <form action="/kebiao" method="get">
+    <div class="query-bar">
+        <div class="field-group">
+            <label>📅 班级</label>
+            <select id="classname" name="class_id">
+               <option value="1">24软件技术1班</option>
+                <option value="2">24软件技术2班</option>
+            </select>
+        </div>
+        <div class="field-group">
+        <label>⏰ week</label>
+        <select id="week" name="week">
+            <option th:each="i:${#numbers.sequence(1,19)}" th:value="${i}" th:text="|第${i}周|"></option>
+        </select>
+    </div>
+        <div class="field-group">
+            <button id="queryBtn" type="submit">🔍 查询课程</button>
+        </div>
+    </div>
+        </form>
+
+
+
+
+
+    <!-- 可视化课表 (基础表格展示所有课程概览) -->
+    <div class="timetable-wrapper">
+        <table id="timetableTable">
+            <thead>
+            <tr>
+                <th>节次 / 星期</th>
+                <th>星期一</th>
+                <th>星期二</th>
+                <th>星期三</th>
+                <th>星期四</th>
+                <th>星期五</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="period,periodStat : ${#numbers.sequence(1, 5)}">
+                <th th:text="'第' + ${period} + '节'"></th>
+                <td th:each="weekday,weekStat : ${#numbers.sequence(1, 5)}"
+                    th:text="${tableData[period][weekday]} ?: ' '">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 单独查询结果显示区域 (最简单的反馈) -->
+    <div id="queryResult" class="result-highlight">
+        💡 提示：点击上方「查询课程」按钮，或直接点击表格中的课程格子也可查询～
+    </div>
+    <footer>📌 课表数据</footer>
+</div>
+</body>
+<script>
+    // 回显下拉框的通用函数
+    function setSelectValue(selectId, paramName) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const value = urlParams.get(paramName);
+        if (value) {
+            const select = document.getElementById(selectId);
+            select.value = value;  // 直接赋值，浏览器会自动匹配
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+        setSelectValue('classname', 'class_id');
+        setSelectValue('week', 'week');
+    });
+</script>
+</html>

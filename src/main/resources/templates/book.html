@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书馆系统</title>
+    <style>
+        /* 只做基础整理：间距、对齐、轻量视觉 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            background: #f9fafc;
+            color: #1f2d3d;
+            line-height: 1.4;
+        }
+
+        /* 顶部区域 */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .top-bar h1 {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #0f3b5c;
+        }
+        .uni {
+            font-size: 1rem;
+            color: #2c6e9e;
+            font-weight: 500;
+        }
+
+        /* 查询表单 */
+        .search-form {
+            background: white;
+            padding: 20px 18px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .search-form input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            font-size: 1rem;
+            background: #fff;
+        }
+        .search-form button {
+            background: #2c6e9e;
+            color: white;
+            border: none;
+            padding: 0 28px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #suggestBox{
+            margin-left: 30px;
+            margin-top: -36px;
+            border:1px solid #ccc;
+            background:white;
+            position:absolute;
+            width:70%;
+            display: none;
+            height: auto;
+            max-height:200px;
+            overflow-y:auto;
+        }
+
+        /* 提醒卡片 */
+        .reminder {
+            background: #fff6e0;
+            border-left: 5px solid #f5a623;
+            padding: 14px 20px;
+            border-radius: 16px;
+            margin-bottom: 28px;
+            font-weight: 500;
+        }
+
+        /* 三个功能卡片 */
+        .actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .action-card {
+            flex: 1;
+            background: white;
+            text-align: center;
+            padding: 16px 8px;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #1f4e6e;
+            border: 1px solid #e2edf2;
+        }
+
+        /* 底部三个板块 */
+        .section {
+            margin-bottom: 32px;
+        }
+        .section h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-left: 4px solid #2c6e9e;
+            padding-left: 14px;
+            margin-bottom: 16px;
+            color: #1e3a5f;
+        }
+        .placeholder-text {
+            background: #f1f5f9;
+            padding: 28px 20px;
+            border-radius: 20px;
+            text-align: center;
+            color: #4a5b6e;
+            font-size: 0.95rem;
+        }
+
+        img {
+            max-width: 100%;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <h1>📖 图书馆管理系统</h1>
+    <div class="uni">xxxxx大学</div>
+</div>
+
+<form class="search-form">
+    <input type="text" placeholder="输入书名、作者或关键词，点击查询" id="bookName" oninput="showSuggest()">
+    <button id="searchBtn" >🔍 查询</button>
+</form>
+<div id="suggestBox" ></div>
+<div>
+    <!-- 示意占位图，你可以替换真实图片地址 -->
+    <img src="https://picsum.photos/id/20/900/140" alt="图书馆内景">
+</div>
+
+<div class="reminder">
+    📌 你还有未还的书 · 请及时归还
+</div>
+
+<div class="actions">
+    <a th:href="@{/book/borrow}"><div class="action-card">📚 借书</div></a>
+    <a th:href="@{/borrow}"><div class="action-card">📖 还书</div></a>
+    <a th:href="@{/borrow}"><div class="action-card">❤️ 捐书</div></a>
+</div>
+
+<div class="section">
+    <h2>热门书籍</h2>
+    <div class="placeholder-text">《三体》《人类简史》《你当像鸟飞往你的山》……</div>
+</div>
+
+<div class="section">
+    <h2>经典名著</h2>
+    <div class="placeholder-text">《红楼梦》《百年孤独》《活着》《战争与和平》</div>
+</div>
+
+<div class="section">
+    <h2>名牌教师</h2>
+    <div class="placeholder-text">徐老师 · 陈教授 · 林导师 · 张研究馆员</div>
+</div>
+
+</body>
+<script src="/book.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</html>

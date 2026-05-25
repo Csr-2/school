@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>学生请假申请 · 简洁蓝色系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f2f5;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        /* 主卡片容器 */
+        .leave-card {
+            max-width: 700px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 65, 128, 0.2), 0 1px 4px rgba(0,0,0,0.02);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* 蓝色头部 */
+        .blue-header {
+            background: #0a5c9e;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.08) 2%, transparent 2.5%);
+            background-size: 28px 28px;
+            padding: 1.8rem 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .blue-header h1 {
+            font-weight: 600;
+            font-size: 1.9rem;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .blue-header h1::before {
+            content: "📋";
+            font-size: 1.8rem;
+            font-weight: normal;
+        }
+
+        .blue-header p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        /* 内容区 */
+        .content {
+            padding: 2rem 2rem 2rem;
+        }
+
+        /* 表单样式 */
+        .leave-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .form-group.full-width {
+            width: 100%;
+            flex: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e4663;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label .required {
+            color: #e25c5a;
+            margin-left: 3px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            font-size: 0.95rem;
+            border: 1.5px solid #e1edfb;
+            border-radius: 1.2rem;
+            background-color: #fbfeff;
+            transition: all 0.2s;
+            font-family: inherit;
+            color: #0f2c44;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #2c7fd4;
+            box-shadow: 0 0 0 3px rgba(44, 127, 212, 0.15);
+            background: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* 日期时间行辅助 */
+        .date-time-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .date-time-group .form-group {
+            flex: 1;
+        }
+
+        /* 按钮组 */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            font-weight: 600;
+            padding: 0.85rem 0;
+            border-radius: 2.5rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            background: white;
+        }
+
+        .btn-primary {
+            background: #0f6bc0;
+            color: white;
+            box-shadow: 0 4px 8px rgba(15, 107, 192, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #0a5aab;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(15, 107, 192, 0.25);
+        }
+
+        .btn-secondary {
+            background: #eff4fc;
+            color: #2c628b;
+            border: 1px solid #cdddec;
+        }
+
+        .btn-secondary:hover {
+            background: #e6eff8;
+            border-color: #b8d0e8;
+        }
+
+        /* 提示消息区域 */
+        .message-area {
+            margin-top: 1.8rem;
+            border-radius: 1.2rem;
+            transition: all 0.2s;
+        }
+
+        .info-message {
+            background: #f0f7fe;
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            text-align: center;
+            color: #2c628b;
+            font-size: 0.85rem;
+            border-left: 4px solid #3f8ad4;
+        }
+
+        .success-message {
+            background: #e3f5ec;
+            border-left: 4px solid #2a9d6e;
+            color: #1c6e4a;
+        }
+
+        .error-message {
+            background: #ffeceb;
+            border-left: 4px solid #e25c5a;
+            color: #b13b39;
+        }
+
+        footer {
+            margin-top: 1.5rem;
+            font-size: 0.7rem;
+            text-align: center;
+            color: #6f93b0;
+            border-top: 1px solid #e2edf7;
+            padding-top: 1.2rem;
+        }
+
+        @media (max-width: 560px) {
+            .content {
+                padding: 1.5rem;
+            }
+            .button-group {
+                flex-direction: column;
+            }
+            .blue-header h1 {
+                font-size: 1.6rem;
+            }
+            .date-time-group {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="leave-card">
+    <div class="blue-header">
+        <h1>学生请假申请</h1>
+        <p>请填写以下信息 · 班主任将尽快审批</p>
+    </div>
+
+    <div class="content">
+        <form id="leaveForm" class="leave-form">
+            <!-- 第一行: 学生姓名 + 学号 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>学生姓名 <span class="required">*</span></label>
+                    <input type="text" id="studentName" placeholder="例: 张明轩" autocomplete="off" required>
+                </div>
+                <div class="form-group">
+                    <label>学号 <span class="required">*</span></label>
+                    <input type="text" id="studentId" placeholder="例: 202403001" autocomplete="off" required>
+                </div>
+            </div>
+
+            <!-- 第二行: 班级 + 联系电话 -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>班级</label>
+                    <input type="text" id="className" placeholder="例: 计算机科学与技术1班" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>家长/本人联系电话</label>
+                    <input type="tel" id="phone" placeholder="手机号码" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- 第三行: 请假类型 -->
+            <div class="form-group">
+                <label>请假类型 <span class="required">*</span></label>
+                <select id="leaveType" required>
+                    <option value="" disabled selected>—— 请选择请假类型 ——</option>
+                    <option value="病假">🤒 病假</option>
+                    <option value="事假">📅 事假</option>
+                    <option value="婚假">💒 婚假</option>
+                    <option value="丧假">🕯️ 丧假</option>
+                    <option value="公假">🏛️ 公假 (学校活动)</option>
+                    <option value="其他">📝 其他</option>
+                </select>
+            </div>
+
+            <!-- 起止日期时间 (双字段灵活) -->
+            <div class="date-time-group">
+                <div class="form-group">
+                    <label>开始时间 <span class="required">*</span></label>
+                    <input type="datetime-local" id="startTime" required>
+                </div>
+                <div class="form-group">
+                    <label>结束时间 <span class="required">*</span></label>
+                    <input type="datetime-local" id="endTime" required>
+                </div>
+            </div>
+
+            <!-- 请假事由(详细) -->
+            <div class="form-group full-width">
+                <label>请假事由 <span class="required">*</span></label>
+                <textarea id="reason" placeholder="请详细说明请假原因，方便班主任审批... (不少于5个字)" required></textarea>
+            </div>
+
+            <!-- 备注可选 -->
+            <div class="form-group full-width">
+                <label>补充说明 (选填)</label>
+                <textarea id="remarks" placeholder="如需提供附加信息，例如紧急联系人、课程资料交接等..."></textarea>
+            </div>
+
+            <!-- 按钮组 -->
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" id="submitBtn">📨 提交申请</button>
+                <button type="button" class="btn btn-secondary" id="resetBtn">🔄 重置表单</button>
+            </div>
+        </form>
+
+        <!-- 消息反馈区域 -->
+        <div id="messageArea" class="message-area">
+            <div class="info-message">
+                💡 请完整填写带 * 的必填项，提交后班主任将收到您的请假申请。
+            </div>
+        </div>
+        <footer>
+            🏫 校规提醒：请提前提交请假申请，销假后请及时到教务处备案。
+        </footer>
+    </div>
+</div>
+</body>
+</html>

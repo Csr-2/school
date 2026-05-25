@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+    <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>学生服务平台</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+                background: #f0f2f5;
+                min-height: 100vh;
+                padding: 20px;
+            }
+            a{
+                display: block;
+                text-decoration: none;
+                color: inherit;
+            }
+
+            /* 顶部导航 */
+            .header {
+                background: #a3cbed;
+                padding: 16px 24px 50px 24px;
+                border-bottom: #1a73e8 solid 5px;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                margin-bottom: 50px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                position: relative;
+            }
+
+            .logo h1 {
+                font-size: 1.5rem;
+                color: #1a73e8;
+            }
+
+            .logo p {
+                font-size: 0.75rem;
+                color: #5f6368;
+            }
+            .user-info span:hover{
+                color: #1a73e8;
+                border-bottom: #1a73e8 solid 1px;
+            }
+
+
+            .user-info {
+                position:relative;
+                top: 40px;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-family: "宋体";
+                font-size: 20px;
+            }
+
+            /* 功能网格 */
+            .section-title {
+                font-size: 1.1rem;
+                color: #202124;
+                margin-bottom: 16px;
+                font-weight: 500;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 14px;
+                margin-bottom: 28px;
+            }
+
+            .card {
+                background: white;
+                padding: 18px 10px;
+                border-radius: 16px;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.2s;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            }
+
+            .card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+            }
+
+            .card .icon {
+                font-size: 30px;
+                margin-bottom: 8px;
+            }
+
+            .card .name {
+                font-size: 0.8rem;
+                color: #3c4043;
+            }
+
+            /* 下方双栏 */
+            .two-cols {
+                margin-top: 80px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .info-box {
+                background: white;
+                border-radius: 16px;
+                padding: 18px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            }
+
+            .info-box h3 {
+                font-size: 1rem;
+                margin-bottom: 12px;
+                color: #1a73e8;
+            }
+
+            .notice-list {
+                list-style: none;
+            }
+
+            .notice-list li {
+                padding: 10px 0;
+                border-bottom: 1px solid #eee;
+                font-size: 0.85rem;
+                color: #5f6368;
+            }
+
+            .footer {
+                margin-top: 24px;
+                text-align: center;
+                font-size: 0.7rem;
+                color: #9aa0a6;
+                padding: 16px;
+            }
+            .xiao{
+                position: fixed;
+                right: 0%;
+                top: 0%;
+                width: 100%;
+                height: 100%;
+                z-index: -100;
+                opacity: 0.4;
+            }
+            .xiao img{
+                width: 100%;
+                height: 100%;
+            }
+            .left{
+                float: right;
+                margin-top: -300px;
+                margin-right: 90px;
+                width: 100%;
+                height: auto;
+                max-width: 400px;
+                overflow: hidden;
+                position: relative;
+                border: #1a73e8 solid 3px;
+                border-radius: 5%;
+            }
+            .slide{
+                display: flex;
+                width: 400%;
+                animation: s 15S infinite;
+            }
+            .slide img{
+                width: 25%;
+            }
+            @keyframes s {
+                0%{
+                    transform: translateX(0);
+                }
+                25%{
+                    transform: translateX(0);
+                }
+                30%{
+                    transform: translateX(-25%);
+                }
+                55%{
+                    transform: translateX(-25%);
+                }
+                60%{
+                    transform: translateX(-50%);
+                }
+                65%{
+                    transform: translateX(-50%);
+                }
+                70%{
+                    transform: translateX(-75%);
+                }
+                75%{
+                    transform: translateX(-75%);
+                }
+                95%{
+                    transform: translateX(-100%);
+                }
+                100%{
+                    transform: translateX(-100%);
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+    <div class="header">
+        <div class="logo">
+            <h1>📚 学生服务平台</h1>
+            <p>学习 · 生活 · 成长</p>
+        </div>
+        <div class="user-info">
+            下午好<span th:text="${session.username}">梨</span>☀️
+        </div>
+    </div>
+    <!-- 常用功能入口 -->
+    <div class="section-title">⚡ 我的</div>
+    <div class="grid">
+        <a th:href="@{/kebiao}"><div class="card"><div class="icon">📖</div><div class="name">课表查询</div></div></a>
+        <a th:href="@{/score}"><div class="card"><div class="icon">📊</div><div class="name">成绩查询</div></div></a>
+        <a th:href="@{/choose}"><div class="card" ><div class="icon">✅</div><div class="name">选课系统</div></div></a>
+    </div>
+
+    <div class="section-title">📌 校园服务</div>
+    <div class="grid">
+        <a th:href="@{/book}"><div class="card"><div class="icon">📚</div><div class="name">图书馆</div></div></a>
+        <a th:href="@{/please}"><div class="card"><div class="icon">📋</div><div class="name">请假申请</div></div></a>
+    </div>
+    <div class="xiao">
+        <img src="../img/xuexiaosheying4_11193505.jpg">
+    </div>
+    <div class="left">
+        <div class="slide">
+            <img src="../img/9184.jpg_wh860.jpg" alt="s1">
+            <img src="../img/2507.jpg_wh860.jpg" alt="s2">
+            <img src="../img/7630.jpg_wh860.jpg" alt="s3">
+            <img src="../img/xuexiaosheying4_11193505.jpg" alt="s4">
+        </div>
+    </div>
+    <!-- 下方通知+快捷入口 -->
+    <div class="two-cols">
+        <div class="info-box">
+            <h3>📢 最新通知</h3>
+            <ul class="notice-list">
+                <li>📌 关于2025年秋季选课的通知</li>
+                <li>📌 图书馆期末开放时间调整</li>
+                <li>📌 奖学金申请截止提醒</li>
+                <li>📌 英语四六级考场安排</li>
+            </ul>
+        </div>
+        <div class="info-box">
+            <h3>📆 考试日历</h3>
+            <ul class="notice-list">
+                <li>📅 高等数学 · 1月10日</li>
+                <li>📅 大学英语 · 1月12日</li>
+                <li>📅 程序设计 · 1月15日</li>
+                <li>📅 期末考试周 · 1月8日-1月20日</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer">
+        学生服务平台 · 让校园生活更便捷
+    </div>
+
+    </body>
+    </html>

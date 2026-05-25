@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>欢迎登录 | 安全入口</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #c0e0ff 0%, #8abbe8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 1rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 装饰性背景圆环，增加视觉层次 */
+
+        body::before {
+            content: "";
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: 0px;
+            left: -150px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            top: -200px;
+            right: -180px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+
+        /* 主卡片容器 —— 保持原有 #kuanjia 结构但增强体验 */
+        #kuanjia {
+            width: 100%;
+            max-width: 380px;
+            height: auto;
+            float: right;
+            margin-right:100px;
+            margin-bottom: 150px;
+            padding: 2rem 1.8rem 2.2rem 1.8rem;
+            border-radius: 32px;
+            background-color: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(0px);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.25s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        #kuanjia:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 30px 50px -15px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 1.9rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: #1b3b5c;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        h2::after {
+            content: "";
+            display: block;
+            width: 56px;
+            height: 3px;
+            background: #3b82f6;
+            border-radius: 3px;
+            margin: 10px auto 0;
+            opacity: 0.7;
+        }
+
+        form {
+            margin-left: 0;
+            line-height: 1.5;
+            width: 100%;
+        }
+
+        /* 表单项容器，提升可点区域 */
+        .input-group {
+            margin-bottom: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #2c3e4e;
+            width: 70px;
+            flex-shrink: 0;
+        }
+
+        input {
+            background-color: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #cbdde9;
+            width: 100%;
+            flex: 1;
+            height: 44px;
+            padding: 0 16px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            outline: none;
+            font-family: inherit;
+            color: #1a2c3c;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #fff;
+        }
+
+        input::placeholder {
+            color: #9aaebf;
+            font-size: 0.85rem;
+        }
+
+        /* 按钮区域优化 */
+        button {
+            width: 100%;
+            max-width: 200px;
+            height: 46px;
+            background-color: #1f6390;
+            background: linear-gradient(105deg, #1f6390, #2c7cb6);
+            border-radius: 40px;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            cursor: pointer;
+            transition: all 0.25s;
+            display: block;
+            margin: 1.8rem auto 0.6rem auto;
+            box-shadow: 0 5px 12px rgba(31, 99, 144, 0.3);
+            position: relative;
+        }
+
+        button:hover {
+            background: linear-gradient(105deg, #155272, #1f6390);
+            transform: scale(0.98);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        .helper-note span {
+            color: #2c7cb6;
+            cursor: default;
+        }
+
+        /* 响应式设计，针对移动设备和小窗口 */
+        @media (max-width: 750px) {
+            body {
+                justify-content: center;
+                background: linear-gradient(135deg, #b8d4f0, #85b3db);
+            }
+            #kuanjia {
+                float: none;
+                margin: 1rem auto;
+                max-width: 90%;
+                padding: 1.6rem 1.4rem;
+                margin-top: 10vh;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .input-group label {
+                width: auto;
+                margin-bottom: 5px;
+            }
+            input {
+                width: 100%;
+            }
+            button {
+                width: 100%;
+                max-width: none;
+            }
+            h2 {
+                font-size: 1.7rem;
+            }
+        }
+
+        /* 简单的加载微交互（点击时模拟加载，防止快速重复提交） */
+        button.loading {
+            pointer-events: none;
+            opacity: 0.7;
+            background: #4a6f8c;
+            transform: scale(0.98);
+        }
+        button.loading::after {
+            content: " ⏳";
+            font-size: 1rem;
+        }
+
+        /* 错误信息简单样式，如果需要前端验证增加友好性 */
+        .error-msg {
+            color: #d14545;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: block;
+            text-align: left;
+            padding-left: 5px;
+        }
+
+        footer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div id="kuanjia">
+        <h2>欢迎登录</h2>
+        <!-- 保留原始 method="post" 与 action="/doLogin"，增强前端基础验证 -->
+        <form method="post" action="/doLogin" id="loginForm">
+            <div class="input-group">
+                <label for="username">账号：</label>
+                <input type="text" id="username" name="username" placeholder="手机号 / 邮箱 / 工号" autocomplete="username" required>
+            </div>
+            <div class="input-group">
+                <label for="mima">密码：</label>
+                <input type="password" id="mima" name="password" placeholder="请输入密码" autocomplete="current-password" required>
+            </div>
+            <!-- 前端提示区域 (用于简单验证消息，不影响后端逻辑) -->
+            <div id="formFeedback" style="min-height: 24px;"></div>
+            <button type="submit" id="s">点击登录</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 获取 DOM 元素
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('mima');
+        const submitBtn = document.getElementById('s');
+        const feedbackDiv = document.getElementById('formFeedback');
+        // 清除错误提示
+        function clearFeedback() {
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = '';
+            }
+        }
+        //async
+        loginForm.addEventListener('submit',async function (e){
+            console.log("have")
+            e.preventDefault();
+            const params = new URLSearchParams();
+            params.append('username', usernameInput.value.trim());
+            params.append('password', passwordInput.value);
+            const response =await fetch('/doLogin',{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body:params
+            })
+            const res=await response.json();
+            console.log(res)
+            console.log(res.data)
+            if (res.data){
+                console.log('准备跳转')
+                window.location.href='success';
+            }
+        })
+
+        // 显示错误提示信息 (友好提醒)
+        function showFeedback(message, isError = true) {
+            if (feedbackDiv) {
+                feedbackDiv.innerHTML = `<div class="error-msg" style="color: ${isError ? '#d14545' : '#2c7cb6'}; background: ${isError ? '#fef2f0' : '#e8f0fe'}; padding: 6px 10px; border-radius: 30px; text-align: center;">⚠️ ${message}</div>`;
+                // 3秒后自动清除普通消息，错误消息保留稍长一点，但不清除也行，下次提交会覆盖
+                if (!isError) {
+                    setTimeout(() => {
+                        if (feedbackDiv.innerHTML.includes(message)) {
+                            feedbackDiv.innerHTML = '';
+                        }
+                    }, 3000);
+                }
+            }
+        }
+
+        // 显示加载状态
+        function setLoadingState(isLoading) {
+            if (!submitBtn) return;
+            if (isLoading) {
+                submitBtn.classList.add('loading');
+                // 保留原始文字以备恢复，但也可以通过 data 属性
+                if (!submitBtn.hasAttribute('data-original-text')) {
+                    submitBtn.setAttribute('data-original-text', submitBtn.innerText);
+                }
+                submitBtn.innerText = '登录中...';
+                submitBtn.disabled = true;
+            } else {
+                submitBtn.classList.remove('loading');
+                const originalText = submitBtn.getAttribute('data-original-text');
+                submitBtn.innerText = originalText || '点击登录';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // 前端基础校验（非空，格式简单检查）
+        function validateForm() {
+            clearFeedback();
+            const username = usernameInput ? usernameInput.value.trim() : '';
+            const password = passwordInput ? passwordInput.value : '';
+
+            if (username === '') {
+                showFeedback('账号不能为空，请输入您的账号');
+                if (usernameInput) usernameInput.focus();
+                return false;
+            }
+            if (password === '') {
+                showFeedback('密码不能为空，请输入密码');
+                if (passwordInput) passwordInput.focus();
+                return false;
+            }
+            // 可选：弱弱提示长度（不是强限制，仅提升体验）
+            if (password.length < 3) {
+                showFeedback('密码长度建议至少3位（演示仅供提醒）', false);
+
+            }
+            return true;
+        }
+        // 但为了防止重复提交，once 控制，使用标志位
+        let isSubmitting = false;
+
+        loginForm.addEventListener('submit', function(event) {
+            // 执行前端验证
+            const isValid = validateForm();
+            if (!isValid) {
+                event.preventDefault();  // 验证不通过，阻止提交
+                return false;
+            }
+
+            // 防止短时间内多次点击提交
+            if (isSubmitting) {
+                event.preventDefault();
+                showFeedback('正在提交中，请勿重复点击');
+                return false;
+            }
+
+            // 设置提交锁 + 加载效果
+            isSubmitting = true;
+            setLoadingState(true);
+            setTimeout(() => {
+                if (isSubmitting) {
+                    // 如果提交超过8秒并且页面未被刷新，可能是网络阻塞，恢复按钮（但通常很少发生，主要是修复边缘情况）
+                    isSubmitting = false;
+                    setLoadingState(false);
+                    // 移除锁后提示超时，让用户可以再次点击，但又有可能是提交已发送，为了避免重复提交，给个警告
+                    if (document.body.contains(loginForm)) {
+                        showFeedback('请求超时，请检查网络后重试', true);
+                    }
+                }
+            }, 8000);
+            return true;
+        });
+        const clearFeedbackOnInput = function() {
+            if (feedbackDiv && feedbackDiv.innerHTML !== '') {
+                clearFeedback();
+            }
+        };
+        if (usernameInput) usernameInput.addEventListener('input', clearFeedbackOnInput);
+        if (passwordInput) passwordInput.addEventListener('input', clearFeedbackOnInput);
+
+        console.log('登录页已加载 | 表单提交地址: ' + loginForm.action + ' | 方法: post');
+
+
+        const helperNote = document.querySelector('.helper-note');
+        if (helperNote && !helperNote.querySelector('.demo-hint')) {
+            const demoHintSpan = document.createElement('div');
+            demoHintSpan.style.marginTop = '8px';
+            demoHintSpan.style.fontSize = '0.7rem';
+            demoHintSpan.style.opacity = '0.8';
+            demoHintSpan.innerText = '✨ 测试账号任意 (前端仅校验非空)';
+            demoHintSpan.style.cursor = 'default';
+            helperNote.appendChild(demoHintSpan);
+        }
+    })();
+</script>
+</body>
+</html>
