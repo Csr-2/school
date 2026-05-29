@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    /* 模态框 - 仿图片中的“确定/取消”弹窗风格 */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        visibility: visible;
+    }
+    .modal {
+        background: white;
+        width: 480px;
+        max-width: 90%;
+        border-radius: 20px;
+        box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+        overflow: hidden;
+    }
+    .modal-header {
+        padding: 18px 24px;
+        border-bottom: 1px solid #eef2f6;
+        font-weight: 600;
+        font-size: 18px;
+        color: #0a58ca;
+        background: #fefefe;
+    }
+    .modal-body {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+    .modal-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .modal-field label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .modal-field input,
+    .modal-field select,
+    .modal-field textarea {
+        padding: 10px 12px;
+        border: 1px solid #cbd5e6;
+        border-radius: 10px;
+        font-size: 13px;
+        font-family: inherit;
+    }
+    .modal-field textarea {
+        resize: vertical;
+        min-height: 70px;
+    }
+    .modal-footer {
+        padding: 16px 24px;
+        background: #fafcff;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        border-top: 1px solid #eff3f8;
+    }
+    .btn-modal-confirm {
+        background: #0a58ca;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 40px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .btn-modal-cancel {
+        background: #b2d7fb;
+        border: 1px solid #cbd5e1;
+        padding: 8px 20px;
+        border-radius: 40px;
+        cursor: pointer;
+    }
+
+</style>
+<body>
+<!-- 添加/编辑模态框 (仿图片中的确定取消风格) -->
+<div id="modal" class="modal-overlay">
+    <form >
+        <div class="modal">
+            <div class="modal-header" id="modalTitle">添加课表</div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label>班级</label>
+                    <select class="class_id">
+                        <option>--几班--</option>
+                        <option>1</option>
+                        <option>2</option>
+                    </select>
+                    <label>课程名称</label>
+                    <input type="text" class="course_name" >
+                    <label>起始周</label>
+                    <input type="number" class="start_week" >
+                    <label>结束周</label>
+                    <input type="number" class="end_week">
+                    <label>星期</label>
+                    <select class="week_day">
+                        <option>星期几</option>
+                        <option>星期一</option>
+                        <option>星期二</option>
+                        <option>星期三</option>
+                        <option>星期四</option>
+                        <option>星期五</option>
+                    </select>
+                    <label>时期</label>
+                    <select class="period">
+                        <option>几节</option>
+                        <option>第一节</option>
+                        <option>第二节</option>
+                        <option>第三节</option>
+                        <option>第四节</option>
+                        <option>第五节</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="cancelModalBtn">取消</button>
+                <button class="btn-modal-confirm" id="confirmModalBtn">确定</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    // 6. 确认添加课程
+    document.getElementById("confirmModalBtn").addEventListener("click", async function (e) {
+        console.log("suss")
+        const class_id = document.querySelector(".class_id").value;
+        const course_name = document.querySelector(".course_name").value;
+        const start_week = document.querySelector(".start_week").value;
+        const end_week = document.querySelector(".end_week").value;
+        const period = document.querySelector(".period").value;
+        e.preventDefault()
+
+        //校验
+        if (!class_id || !course_name || !start_week || !end_week || !period) {
+            alert("请填写完整信息");
+            return;
+        }
+        console.log("kk")
+        console.log("添加课程:", {class_id, course_name, start_week, end_week, period});
+
+        const response = await fetch("/add", {
+            method: "post",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                class_id: class_id,
+                course_name: course_name,
+                start_week: start_week,
+                end_week: end_week,
+                period: period
+            })
+        });
+        if (response.ok) {
+            alert("添加成功！");
+            window.location.href = "/schedule";
+
+        } else {
+            alert("添加失败");
+        }
+   });
+</script>
