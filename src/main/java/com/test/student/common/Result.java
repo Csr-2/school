@@ -6,6 +6,7 @@ import lombok.Data;
 public class Result<T> {
     private String message;
     private T data;
+
     public  Result() {}
     public Result(String message, T data) {
         this.message = message;
@@ -23,4 +24,5 @@ public class Result<T> {
     public static <T> Result<T> failed(String message, T data) {
         return new Result<T>(message, data);
     }
+
 }

@@ -260,35 +260,16 @@
                     <label>学生姓名 <span class="required">*</span></label>
                     <input type="text" id="studentName" placeholder="例: 张明轩" autocomplete="off" required>
                 </div>
-                <div class="form-group">
-                    <label>学号 <span class="required">*</span></label>
-                    <input type="text" id="studentId" placeholder="例: 202403001" autocomplete="off" required>
-                </div>
             </div>
-
-            <!-- 第二行: 班级 + 联系电话 -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label>班级</label>
-                    <input type="text" id="className" placeholder="例: 计算机科学与技术1班" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label>家长/本人联系电话</label>
-                    <input type="tel" id="phone" placeholder="手机号码" autocomplete="off">
-                </div>
-            </div>
-
             <!-- 第三行: 请假类型 -->
             <div class="form-group">
                 <label>请假类型 <span class="required">*</span></label>
                 <select id="leaveType" required>
                     <option value="" disabled selected>—— 请选择请假类型 ——</option>
-                    <option value="病假">🤒 病假</option>
-                    <option value="事假">📅 事假</option>
-                    <option value="婚假">💒 婚假</option>
-                    <option value="丧假">🕯️ 丧假</option>
-                    <option value="公假">🏛️ 公假 (学校活动)</option>
-                    <option value="其他">📝 其他</option>
+                    <option>病假</option>
+                    <option>事假</option>
+                    <option>调课</option>
+                    <option>公出</option>
                 </select>
             </div>
 
@@ -310,12 +291,6 @@
                 <textarea id="reason" placeholder="请详细说明请假原因，方便班主任审批... (不少于5个字)" required></textarea>
             </div>
 
-            <!-- 备注可选 -->
-            <div class="form-group full-width">
-                <label>补充说明 (选填)</label>
-                <textarea id="remarks" placeholder="如需提供附加信息，例如紧急联系人、课程资料交接等..."></textarea>
-            </div>
-
             <!-- 按钮组 -->
             <div class="button-group">
                 <button type="button" class="btn btn-primary" id="submitBtn">📨 提交申请</button>
@@ -335,4 +310,37 @@
     </div>
 </div>
 </body>
+<!-- 先引入 axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const time= new Date();
+    const apply_time=time.getFullYear()+"-"+(time.getMonth()+1)+"-"+time.getDate()+" "+
+        time.getHours()+":"+time.getMinutes()+":"+time.getSeconds();
+    console.log(apply_time);
+    const loginForm=document.getElementById("submitBtn")
+    loginForm.addEventListener('click',async function (e){
+        const name = document.getElementById("studentName").value;
+        const type = document.querySelector("#leaveType").value;
+        const start_date = document.getElementById("startTime").value.split('T')[0];
+        const end_date = document.getElementById("endTime").value.split('T')[0];
+        const reason = document.getElementById("reason").value;
+        console.log("have")
+        console.log(document.getElementById("startTime").value.split('T')[0])
+        console.log(document.getElementById("endTime").value)
+        e.preventDefault();
+        await fetch("/please", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+                name: name,
+                type: type,
+                start_date: start_date,
+                end_date: end_date,
+                reason: reason,
+                apply_time: apply_time,
+                status: "待审批"
+            })
+        })
+    })
+</script>
 </html>

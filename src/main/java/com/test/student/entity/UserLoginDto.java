@@ -10,6 +10,6 @@ public class UserLoginDto{
     @Size(min = 2,max = 20,message = "用户长度2-20之间")
     private String username;
     @NotBlank(message = "不能为空")
-    @Size(min = 6,max = 20,message = "用户长度6-20之间")
+    @Size(min = 5,max = 20,message = "用户长度6-20之间")
     private String password;
 }

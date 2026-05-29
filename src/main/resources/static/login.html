@@ -150,7 +150,7 @@
         }
 
         /* 按钮区域优化 */
-        button {
+       #s {
             width: 100%;
             max-width: 200px;
             height: 46px;
@@ -170,13 +170,13 @@
             position: relative;
         }
 
-        button:hover {
+        #s:hover {
             background: linear-gradient(105deg, #155272, #1f6390);
             transform: scale(0.98);
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
         }
 
-        button:active {
+        #s:active {
             transform: scale(0.96);
         }
 
@@ -219,13 +219,13 @@
         }
 
         /* 简单的加载微交互（点击时模拟加载，防止快速重复提交） */
-        button.loading {
+        #s.loading {
             pointer-events: none;
             opacity: 0.7;
             background: #4a6f8c;
             transform: scale(0.98);
         }
-        button.loading::after {
+        #s.loading::after {
             content: " ⏳";
             font-size: 1rem;
         }
@@ -243,6 +243,26 @@
         footer {
             display: none;
         }
+        .qu{
+            float: right;
+            display: flex;
+            gap: 0;
+            margin-top: -10px;
+        }
+        .qu button{
+            width: 45px;
+            height: 20px;
+            font-size: 11px;
+            border: #80bbf3 solid 1px;
+        }
+        #xue{
+            border-radius:7px 0 0 7px;
+            background-color: #c0e0ff;
+        }
+        #jiao{
+            border-radius:0 7px 7px 0;
+            background-color: #c0e0ff;
+        }
     </style>
 </head>
 <body>
@@ -259,6 +279,11 @@
                 <label for="mima">密码：</label>
                 <input type="password" id="mima" name="password" placeholder="请输入密码" autocomplete="current-password" required>
             </div>
+            <div class="qu">
+                <button id="xue" type="button">学生</button>
+                <button id="jiao" type="button">教师</button>
+            </div>
+            <input type="hidden" id="roleType" name="roleType">
             <!-- 前端提示区域 (用于简单验证消息，不影响后端逻辑) -->
             <div id="formFeedback" style="min-height: 24px;"></div>
             <button type="submit" id="s">点击登录</button>
@@ -274,6 +299,29 @@
         const passwordInput = document.getElementById('mima');
         const submitBtn = document.getElementById('s');
         const feedbackDiv = document.getElementById('formFeedback');
+        var roleType = document.getElementById('roleType').value;
+
+        //切换按钮
+        const xue=document.getElementById('xue')
+        const jiao=document.getElementById('jiao')
+        xue.addEventListener("click",function () {
+            roleType = 'student';
+            xue.style.backgroundColor="#80bbf3"
+            jiao.style.backgroundColor="#c0e0ff"
+        })
+        jiao.addEventListener("click",function () {
+            roleType = 'teacher';
+            jiao.style.backgroundColor="#80bbf3"
+            xue.style.backgroundColor="#c0e0ff"
+        })
+        document.getElementById('loginForm').onsubmit = function(e) {
+            if(!roleType) {
+                alert('请先选择学生或教师身份');
+                e.preventDefault();
+                return false;
+            }
+        }
+
         // 清除错误提示
         function clearFeedback() {
             if (feedbackDiv) {
@@ -287,6 +335,7 @@
             const params = new URLSearchParams();
             params.append('username', usernameInput.value.trim());
             params.append('password', passwordInput.value);
+            params.append('roleType', roleType)
             const response =await fetch('/doLogin',{
                 method:'POST',
                 headers:{
@@ -299,7 +348,7 @@
             console.log(res.data)
             if (res.data){
                 console.log('准备跳转')
-                window.location.href='success';
+                window.location.href=res.data;
             }
         })
 

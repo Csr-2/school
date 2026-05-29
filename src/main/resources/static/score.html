@@ -280,7 +280,7 @@
         </div>
 
         <div class="info-note">
-            💡 下方展示全部学生成绩记录（静态示例），纯HTML/CSS蓝色简洁风格，无JavaScript。
+            💡 全部学生成绩记录
         </div>
 
         <!-- 成绩列表：显示全部预先设定的成绩，达到静态可查效果 -->
@@ -288,37 +288,112 @@
             <!-- 学生1：张三 -->
             <div class="score-card">
                 <div class="card-header">
-                    <span class="student-name">张 三 <span class="badge-blue">2024001</span></span>
+                    <span class="student-name">张 三 <span class="badge-blue">20240011</span></span>
                     <span class="student-id">📖 班级: 计算机1班</span>
                 </div>
                 <table class="score-table">
-                    <tr>
-                        <td class="score-label">语文</td>
-                        <td class="score-value">88 分</td>
-                    </tr>
-                    <tr>
-                        <td class="score-label">数学</td>
-                        <td class="score-value">94 分</td>
-                    </tr>
-                    <tr>
-                        <td class="score-label">英语</td>
-                        <td class="score-value">87 分</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td class="score-label">🏆 总分</td>
-                        <td class="score-value"><strong>269</strong> 分</td>
-                    </tr>
-                    <tr class="total-row">
-                        <td class="score-label">⭐ 平均分</td>
-                        <td class="score-value"><strong>90</strong> 分</td>
-                    </tr>
+<!--                    <tr>-->
+<!--                        <td class="score-label">课程</td>-->
+<!--                        <td class="score-value"></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td class="score-label">日常分</td>-->
+<!--                        <td class="score-value"></td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td class="score-label">考试分</td>-->
+<!--                        <td class="score-value">87 分</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td class="score-label">总分</td>-->
+<!--                        <td class="score-value">87 分</td>-->
+<!--                    </tr>-->
+<!--                    <tr class="total-row">-->
+<!--                        <td class="score-label">🏆 总分</td>-->
+<!--                        <td class="score-value"><strong>269</strong> 分</td>-->
+<!--                    </tr>-->
+<!--                    <tr class="total-row">-->
+<!--                        <td class="score-label">⭐ 平均分</td>-->
+<!--                        <td class="score-value"><strong>90</strong> 分</td>-->
+<!--                    </tr>-->
                 </table>
             </div>
         </div>
         <footer>
-            ䷖ 蓝色简洁成绩单 | 静态数据展示 · 纯HTML/CSS
+            ䷖ 你的成绩单
         </footer>
     </div>
 </div>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+async function doLogin(){
+    try {
+        const res = await axios.get('/score');
+        const list = res.data;
+        console.log(list);
+
+        const container = document.querySelector('.score-card');
+
+        if (!list || list.length === 0) {
+            container.innerHTML = '<h2>我的成绩单</h2><div>暂无成绩数据</div>';
+            return;
+        }
+
+        // 生成表格
+        const rows = list.map(item =>
+            container.innerHTML += `
+                  <table class="score-table">
+                    <tr style="background-color: #6ba5f1">
+                        <td class="score-label">课程</td>
+                        <td class="score-value">${item.classname}</td>
+                    </tr>
+                    <tr>
+                        <td class="score-label">日常分</td>
+                        <td class="score-value">${item.daily}</td>
+                    </tr>
+                    <tr>
+                        <td class="score-label">考试分</td>
+                        <td class="score-value">${item.exam}</td>
+                    </tr>
+                    <tr>
+                        <td class="score-label">总分</td>
+                        <td class="score-value">${item.total}</td>
+                    </tr>
+                    </table>
+            `).join('');
+        //     `
+        //             <tr class="score-label">
+        //                 <td>${item.classname}</td>
+        //                 <td>${item.daily}</td>
+        //                 <td>${item.exam}</td>
+        //                 <td>${item.total}</td>
+        //             </tr>
+        //         `).join('');
+        //
+        // container.innerHTML = `
+        //             <h2>我的成绩单</h2>
+        //             <table>
+        //                 <thead>
+        //                     <tr class="score-value">
+        //                         <th>课程名称</th>
+        //                         <th>平时成绩</th>
+        //                         <th>期末成绩</th>
+        //                         <th>总分</th>
+        //                     </tr>
+        //                 </thead>
+        //                 <tbody>
+        //                     ${rows}
+        //                 </tbody>
+        //             </table>
+        //         `;
+
+    } catch (error) {
+        console.error(error);
+        document.querySelector('.score-card').innerHTML = '<div>加载失败</div>';
+    }
+
+}
+doLogin()
+</script>
 </html>

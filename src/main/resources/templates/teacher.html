@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教师系统 · 工作台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eef5ff;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Noto Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* 正常Web页面布局，不用大盒子套小盒子 */
+        .navbar {
+            background: #0a58ca;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar h1 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .navbar p {
+            color: #cfe5ff;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        /* 快捷信息栏 - 增加数据卡片让页面更充实（但不影响三大功能入口） */
+        .info-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            padding: 1.5rem 2.5rem;
+            background: #f8fcff;
+            border-bottom: 1px solid #e6f0fe;
+            justify-content: space-between;
+        }
+
+        .info-item {
+            flex: 1;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+            border: 1px solid #deebff;
+        }
+
+        .info-icon {
+            font-size: 1.8rem;
+        }
+
+        .info-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: #6f9bc7;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #0a4b7a;
+        }
+        /* 三个功能卡片，正常排列，不挤在一起 */
+        .function-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: flex-start;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.25rem;
+            padding: 2rem 2rem 2rem 2rem;
+            width: calc(33.333% - 1.35rem);
+            min-width: 240px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0edff;
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 55, 107, 0.1);
+            border-color: #b8d2ff;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #0b3b5f;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: #5a7f9e;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background: #0a58ca;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-link:hover {
+            background: #084298;
+        }
+
+        /* 页脚正常 */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid #d4e3fc;
+            color: #6f9bc7;
+            font-size: 0.75rem;
+            background: #f9fcff;
+        }
+
+        @media (max-width: 800px) {
+            .card {
+                width: calc(50% - 1rem);
+            }
+            .container {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 正常顶部栏，不像一个大盒子 -->
+<div class="navbar">
+    <h1>教师工作台</h1>
+    <p>南京信息工程大学 · 智慧教务系统 | 张敏老师</p>
+</div>
+<div class="info-strip">
+    <div class="info-item">
+        <div class="info-icon">📖</div>
+        <div class="info-text">
+            <span class="info-label">今日授课</span>
+            <span class="info-value">软件体系结构 · 2班</span>
+        </div>
+    </div>
+    <div class="info-item">
+        <div class="info-icon">👥</div>
+        <div class="info-text">
+            <span class="info-label">授课班级</span>
+            <span class="info-value">软件工程(卓越)221-224</span>
+        </div>
+    </div>
+    <div class="info-item">
+        <div class="info-icon">📊</div>
+        <div class="info-text">
+            <span class="info-label">待录入成绩</span>
+            <span class="info-value">2门课程 · 96人</span>
+        </div>
+    </div>
+    <div class="info-item">
+        <div class="info-icon">⏰</div>
+        <div class="info-text">
+            <span class="info-label">当前学期</span>
+            <span class="info-value">2025-2026 第二学期</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- 三个功能块：查询课表、添加成绩、请假申请，各走各的跳转页面 -->
+    <div class="function-grid">
+        <!-- 查询课表 -->
+        <div class="card">
+            <div class="card-icon">📅</div>
+            <h2>查询课表</h2>
+            <p>查看本周课程安排、上课时间及教室信息。</p>
+            <a th:href="@{/schedule}" class="btn-link">进入课表 →</a>
+        </div>
+        <!-- 添加成绩 -->
+        <div class="card">
+            <div class="card-icon">✨</div>
+            <h2>添加成绩</h2>
+            <p>录入学生平时成绩、期末成绩，支持多维度评分。</p>
+            <a th:href="@{/grades.html}" class="btn-link">录入成绩 →</a>
+        </div>
+        <!-- 请假申请 -->
+        <div class="card">
+            <div class="card-icon">📋</div>
+            <h2>请假申请</h2>
+            <p>调课申请、病事假审批，线上快速流转。</p>
+            <a th:href="@{/leave.html}" class="btn-link">提交申请 →</a>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    © 2025 智慧教务系统 · 教师专用
+</div>
+
+</body>
+</html>

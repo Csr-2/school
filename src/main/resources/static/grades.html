@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加成绩 · 成绩管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f4f9;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            padding: 24px;
+            color: #1a2c3e;
+        }
+
+        /* 主容器 - 类似图片中的卡片布局 */
+        .main-card {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* 顶部标题栏 */
+        .page-header {
+            padding: 20px 24px 12px 24px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .page-header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0a58ca;
+            margin-bottom: 4px;
+        }
+        .page-header p {
+            font-size: 13px;
+            color: #6c7a8e;
+        }
+
+        /* 筛选/表单区域 - 仿图片中的分类管理筛选栏 */
+        .filter-bar {
+            padding: 20px 24px;
+            background: #f8fafd;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 16px;
+        }
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 140px;
+        }
+        .filter-item label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #4a5b6e;
+            letter-spacing: 0.3px;
+        }
+        .filter-item input,
+        .filter-item select {
+            padding: 8px 12px;
+            border: 1px solid #d0dae8;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+            outline: none;
+            transition: 0.2s;
+        }
+        .filter-item input:focus,
+        .filter-item select:focus {
+            border-color: #0a58ca;
+            box-shadow: 0 0 0 2px rgba(10,88,202,0.1);
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: #0a58ca;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #084298;
+        }
+        .btn-default {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+        }
+        .btn-default:hover {
+            background: #f1f5f9;
+        }
+        .btn-link {
+            background: transparent;
+            color: #0a58ca;
+            padding: 8px 12px;
+        }
+        .btn-link:hover {
+            background: #eef2ff;
+        }
+
+        /* 操作栏 添加按钮+ 类似图片中的“添加” */
+        .action-bar {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #edf2f7;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .btn-add {
+            background: #0a58ca;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .btn-add:hover {
+            background: #084298;
+        }
+        .table-info {
+            font-size: 13px;
+            color: #5e6f8d;
+        }
+
+        /* 表格样式 - 仿图片风格 */
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 24px 20px 24px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th {
+            text-align: left;
+            padding: 14px 12px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f2f5;
+            color: #2d3a4b;
+            vertical-align: middle;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-normal {
+            background: #e6f7e6;
+            color: #2e7d32;
+        }
+        .status-disabled {
+            background: #ffe6e5;
+            color: #c62828;
+        }
+        .action-icons {
+            display: flex;
+            gap: 10px;
+        }
+        .action-icons span {
+            cursor: pointer;
+            font-size: 18px;
+            color: #6b7a8f;
+            transition: 0.1s;
+        }
+        .action-icons span:hover {
+            color: #0a58ca;
+        }
+
+        /* 模态框 - 仿图片中的“确定/取消”弹窗风格 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .modal-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal {
+            background: white;
+            width: 480px;
+            max-width: 90%;
+            border-radius: 20px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .modal-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid #eef2f6;
+            font-weight: 600;
+            font-size: 18px;
+            color: #0a58ca;
+            background: #fefefe;
+        }
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .modal-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .modal-field label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .modal-field input,
+        .modal-field select,
+        .modal-field textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e6;
+            border-radius: 10px;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .modal-field textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            background: #fafcff;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid #eff3f8;
+        }
+        .btn-modal-confirm {
+            background: #0a58ca;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .btn-modal-cancel {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+
+        /* 删除确认小弹窗风格也保持一致 */
+        .small-note {
+            font-size: 12px;
+            color: #8a99b0;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 16px;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-group {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-card">
+    <!-- 头部 -->
+    <div class="page-header">
+        <h1>添加成绩</h1>
+        <p>管理学生课程成绩 · 支持新增、编辑、筛选</p>
+    </div>
+
+    <!-- 筛选栏 - 仿图片分类管理: 分类名称/状态/查询重置等 -->
+    <div class="filter-bar">
+        <div class="filter-item">
+            <label>学生姓名 / 学号</label>
+            <input type="text" id="filterName" placeholder="请输入姓名或学号">
+        </div>
+        <div class="filter-item">
+            <label>成绩状态</label>
+            <select id="filterStatus">
+                <option value="">全部</option>
+                <option>优秀</option>
+                <option>良好</option>
+                <option>及格</option>
+                <option>不及格</option>
+            </select>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="searchBtn">Q 查询</button>
+            <button class="btn btn-default" id="resetBtn">重置</button>
+        </div>
+    </div>
+
+    <!-- 操作栏：添加按钮 + 表格信息统计 -->
+    <div class="action-bar">
+        <button class="btn-add" id="openAddModalBtn">+ 添加成绩</button>
+        <div class="table-info" id="recordCount">共 0 条记录</div>
+    </div>
+
+    <!-- 成绩表格 -->
+    <div class="table-wrapper">
+        <table id="scoreTable">
+            <thead>
+            <tr>
+                <th>序号</th><th>学生姓名</th><th>学号</th><th>平时成绩</th><th>期末成绩</th><th>总评</th><th>状态</th><th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">
+            <!-- 动态渲染js数据，但未使用外部库，完全原生(js仅用于模拟管理，无额外复杂框架，符合增删改查场景) -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 添加/编辑模态框 (仿图片中的确定取消风格) -->
+<div id="modal" class="modal-overlay">
+    <div class="modal">
+        <div class="modal-header" id="modalTitle">添加成绩</div>
+            <div class="modal-body">
+                <div class="modal-field">
+                <label>课程名称 *</label>
+                <div>高等数学</div>
+            </div>
+            <div class="modal-field">
+                <label>学生姓名 *</label>
+                <input type="text" id="studentName" placeholder="例: 郝涛">
+            </div>
+            <div class="modal-field">
+                <label>学号 *</label>
+                <input type="text" id="studentId" placeholder="2024xxxx">
+            </div>
+
+            <div class="modal-field">
+                <label>平时成绩 (0-100)</label>
+                <input type="number" id="dailyScore" step="0.1" placeholder="占比40%">
+            </div>
+            <div class="modal-field">
+                <label>期末成绩 (0-100)</label>
+                <input type="number" id="examScore" step="0.1" placeholder="占比60%">
+            </div>
+            <div class="small-note">* 总评 = 平时×0.4 + 期末×0.6，自动计算等级</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-modal-cancel" id="cancelModalBtn">取消</button>
+            <button class="btn-modal-confirm" id="confirmModalBtn">确定</button>
+        </div>
+    </div>
+
+</div>
+</body>
+<!-- 先引入 axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    // 全局数据存储
+    let scoresData = [];
+    let nextId = 1;
+    let currentEditId = null;
+console.log("c")
+
+    // 从后端加载初始数据
+    async function loadInitialData() {
+    console.log("v")
+        try {
+            // 调用 GET 请求
+            const res = await axios.get('/grades');
+            console.log("s")
+            const list = res.data.data;
+            // data 就是后端的 Result.data，即成绩列表
+            scoresData = list.map((item) => ({
+                id: item.id,
+                name: item.name,
+                studentNo: item.studentNo,
+                daily: item.daily,
+                exam: item.exam,
+                total: item.total,
+                status: item.status
+            }));
+
+            // 更新 nextId
+            if (scoresData.length > 0) {
+                nextId = Math.max(...scoresData.map(s => s.id)) + 1;
+            }
+
+            // 初始渲染
+            renderTable(scoresData);
+        } catch (error) {
+            console.error('加载数据失败:', error);
+            scoresData = [];
+            renderTable([]);
+        }
+    }
+
+    // 渲染表格
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        if (!data) data = scoresData;
+
+        tbody.innerHTML = '';
+        data.forEach((item, idx) => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = idx + 1;
+            row.insertCell(1).innerText = item.name;
+            row.insertCell(2).innerText = item.studentNo;
+            row.insertCell(3).innerText = item.daily;
+            row.insertCell(4).innerText = item.exam;
+            row.insertCell(5).innerText = item.total;
+
+            // 状态徽章
+            const statusCell = row.insertCell(6);
+            let badgeClass = 'status-normal';
+            if (item.status === '不及格') badgeClass = 'status-disabled';
+            else if (item.status === '优秀') badgeClass = 'status-normal';
+            statusCell.innerHTML = `<span class="status-badge ${badgeClass}">${item.status}</span>`;
+
+            // 操作按钮
+            const actionCell = row.insertCell(7);
+            actionCell.className = 'action-icons';
+            actionCell.innerHTML = `
+            <span class="edit-icon" data-id="${item.id}">编辑</span>
+            <span class="delete-icon" data-id="${item.id}">删除</span>
+        `;
+        });
+        // 绑定编辑事件
+        document.querySelectorAll('.edit-icon').forEach(icon => {
+            icon.onclick = () => {
+                const id = parseInt(icon.getAttribute('data-id'));
+                editGrade(id);
+            };
+        });
+
+        // 绑定删除事件
+        document.querySelectorAll('.delete-icon').forEach(icon => {
+            icon.onclick = () => {
+                const id = parseInt(icon.getAttribute('data-id'));
+                deleteGrade(id);
+            };
+        });
+        document.getElementById('recordCount').innerText = `共 ${data.length} 条记录`;
+    }
+        // 筛选
+        function applyFilters() {
+            let keyword = document.getElementById('filterName').value.trim().toLowerCase();
+            let statusFilter = document.getElementById('filterStatus').value;
+
+            let filtered = scoresData.filter(item => {
+                let matchKeyword = keyword === '' ||
+                    item.name.toLowerCase().includes(keyword) ||
+                    item.studentNo.toString().includes(keyword);
+                let matchStatus = statusFilter === '' || item.status === statusFilter;
+                return matchKeyword && matchStatus;
+            });
+            renderTable(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterStatus').value = '';
+            renderTable(scoresData);
+        }
+
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').innerText = '添加成绩';
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentId').value = '';
+            document.getElementById('dailyScore').value = '';
+            document.getElementById('examScore').value = '';
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function editGrade(id) {
+            const item = scoresData.find(s => s.id === id);
+            if (!item) return;
+            currentEditId = id;
+            document.getElementById('modalTitle').innerText = '编辑成绩';
+            document.getElementById('studentName').value = item.name;
+            document.getElementById('studentId').value = item.studentNo;
+            document.getElementById('dailyScore').value = item.daily;
+            document.getElementById('examScore').value = item.exam;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        async function deleteGrade(id) {
+            if (!confirm('确定删除吗？')) return;
+            try {
+                await axios.delete(`/grades/${id}`);
+                await loadInitialData();
+                alert('删除成功');
+            } catch (error) {
+                console.error('删除失败:', error);
+                alert('删除失败');
+            }
+        }
+
+        async function saveScore() {
+            let name = document.getElementById('studentName').value.trim();
+            let studentNo = document.getElementById('studentId').value.trim();
+            let daily = parseFloat(document.getElementById('dailyScore').value) || 0;
+            let exam = parseFloat(document.getElementById('examScore').value) || 0;
+
+            if (!name || !studentNo) {
+                alert('请填写姓名和学号');
+                return;
+            }
+
+            const total = daily + exam;
+            let status = '及格';
+            if (total < 60) status = '不及格';
+            else if (total >= 90) status = '优秀';
+            else if (total >= 80) status = '良好';
+            else if (total >= 70) status = '中等';
+
+            try {
+                if (currentEditId === null) {
+                    await axios.post('/grades', {name, studentNo, daily, exam, total, status});
+                } else {
+                    await axios.put(`/grades/${currentEditId}`, {name, studentNo, daily, exam, total, status});
+                }
+                await loadInitialData();
+                closeModal();
+                alert('保存成功');
+            } catch (error) {
+                console.error('保存失败:', error);
+                alert('保存失败');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            currentEditId = null;
+        }
+
+        // 绑定事件
+        document.getElementById('searchBtn')?.addEventListener('click', applyFilters);
+        document.getElementById('resetBtn')?.addEventListener('click', resetFilters);
+        document.getElementById('openAddModalBtn')?.addEventListener('click', openAddModal);
+        document.getElementById('confirmModalBtn')?.addEventListener('click', saveScore);
+        document.getElementById('cancelModalBtn')?.addEventListener('click', closeModal);
+        document.getElementById('modal')?.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal')) closeModal();
+        });
+        // 启动应用
+        loadInitialData();
+
+</script>
+</html>

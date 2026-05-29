@@ -1,10 +1,11 @@
 package com.test.student.entity;
 
 import lombok.Data;
+
 @Data
-public class User {
+public class Teacher {
     private Integer id;
     private String username;
     private String password;
-    private Integer studentNo;
+    private String classname;
 }
