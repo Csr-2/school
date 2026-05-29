@@ -1,13 +1,13 @@
 package com.test.student.controller;
 
+import com.test.student.common.Result;
 import com.test.student.dao.BIaoMapper;
+import com.test.student.entity.Biaoge;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -20,14 +20,14 @@ public class ScheduleController {
     public String schedule(HttpSession session, Model model,@RequestParam(required = false) Integer class_id,@RequestParam(required = false) Integer week) {
         System.out.println("class_id:"+class_id);
         //List [1,2,3] Map{value,key}
-        List<Map<String,Object>> courses=biaoMapper.findScheduleByClassId(class_id);
+        List<Biaoge> courses=biaoMapper.findScheduleByClassId(class_id);
         String[][] tableData=new String[6][6];
-        for (Map<String,Object> course:courses){
+        for (Biaoge course:courses){
             //打印
             //System.out.println("原始数据: " + course.toString());
 
-            String periodStr = course.get("period").toString();
-            String weekDayStr = course.get("week_day").toString();
+            String periodStr = course.getPeriod();
+            String weekDayStr = course.getWeek_day();
             int weekday = 0;
             switch (weekDayStr) {
                 case "星期一": weekday = 1; break;
@@ -37,9 +37,12 @@ public class ScheduleController {
                 case "星期五": weekday = 5; break;
             }
             int period = Integer.parseInt(periodStr.replace("第", "").replace("节", ""));
-            String course_name= course.get("course_name").toString();
-            int start_week = Integer.parseInt(course.get("start_week").toString());
-            int end_week = Integer.parseInt(course.get("end_week").toString());
+            String course_name= course.getCourse_name();
+            int start_week = Integer.parseInt(course.getStart_week());
+            int end_week = Integer.parseInt(course.getEnd_week());
+            if (week == null) {
+                week = 1;  // 默认第1周
+            }
             if (week>=start_week && week<=end_week) {
                 tableData[period][weekday]=course_name;
             }
@@ -59,8 +62,15 @@ public class ScheduleController {
         model.addAttribute("tableData", tableData);
         return "schedule";
     }
-    @PostMapping()
-    public String addscore(){
-        return "";
+    @PostMapping
+    @ResponseBody
+    public Result<Biaoge> addscore(@RequestBody Biaoge biaoge){
+        try {
+            Biaoge result=biaoMapper.addSchedule(biaoge);
+            return Result.success(result);
+        }catch (Exception e){
+            return Result.failed("失败"+e.getMessage());
+        }
+
     }
 }

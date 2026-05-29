@@ -8,4 +8,6 @@ public class Biaoge {
     private String week_day;
     private String period;
     private String course_name;
+    private String start_week;
+    private String end_week;
 }

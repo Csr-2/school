@@ -170,7 +170,7 @@
         justify-content: center;
         z-index: 1000;
         visibility: hidden;
-        opacity: 0;
+        opacity: 1;
         transition: 0.2s;
     }
     .modal-overlay.show {
@@ -240,7 +240,7 @@
         cursor: pointer;
     }
     .btn-modal-cancel {
-        background: white;
+        background: #b2d7fb;
         border: 1px solid #cbd5e1;
         padding: 8px 20px;
         border-radius: 40px;
@@ -302,7 +302,7 @@
                 <button id="queryBtn" type="submit">🔍 查询课程</button>
             </div>
             <div class="field-group">
-                <button id="addBtn" type="submit">添加课程</button>
+                <button id="addBtn" type="button">添加课程</button>
             </div>
         </div>
     </form>
@@ -342,36 +342,145 @@
 
 <!-- 添加/编辑模态框 (仿图片中的确定取消风格) -->
 <div id="modal" class="modal-overlay">
-    <div class="modal">
-        <div class="modal-header" id="modalTitle">添加课表</div>
-        <div class="modal-body">
-            <div class="modal-field">
-                <label>课程名称 *</label>
-                <div>高等数学</div>
+    <form >
+        <div class="modal">
+            <div class="modal-header" id="modalTitle">添加课表</div>
+            <div class="modal-body">
+                <div class="modal-field">
+                    <label>班级</label>
+                    <select class="class_id" name="class_id">
+                        <option>--请选择--</option>
+                        <option>1</option>
+                        <option>2</option>
+                    </select>
+                    <label>课程名称</label>
+                    <input type="text" class="course_name" >
+                    <label>起始周</label>
+                    <input type="number" class="start_week" >
+                    <label>结束周</label>
+                    <input type="number" class="end_week">
+                    <label>星期</label>
+                    <select class="week_day">
+                        <option>--请选择--</option>
+                        <option>星期一</option>
+                        <option>星期二</option>
+                        <option>星期三</option>
+                        <option>星期四</option>
+                        <option>星期五</option>
+                    </select>
+                </div>
+                <label>时期</label>
+                <select class="period">
+                    <option>第一节</option>
+                    <option>第二节</option>
+                    <option>第三节</option>
+                    <option>第四节</option>
+                    <option>第五节</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="cancelModalBtn">取消</button>
+                <button class="btn-modal-confirm" id="confirmModalBtn">确定</button>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn-modal-cancel" id="cancelModalBtn">取消</button>
-            <button class="btn-modal-confirm" id="confirmModalBtn">确定</button>
-        </div>
-    </div>
-
+    </form>
 </div>
 </body>
+<!-- 先引入 axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    // 回显下拉框的通用函数
+    // 1. 回显下拉框的通用函数
     function setSelectValue(selectId, paramName) {
         const urlParams = new URLSearchParams(window.location.search);
         const value = urlParams.get(paramName);
         if (value) {
             const select = document.getElementById(selectId);
-            select.value = value;  // 直接赋值，浏览器会自动匹配
+            select.value = value;
         }
     }
 
+    // 2. 查询课表函数
+    async function loadSchedule() {
+        const classId = document.getElementById("classname").value;
+        const week = document.getElementById("week").value;
+
+        if (!classId || !week) {
+            console.log("请选择班级和周次");
+            return;
+        }
+
+        // 更新URL参数（不刷新页面）
+        const url = new URL(window.location.href);
+        url.searchParams.set('class_id', classId);
+        url.searchParams.set('week', week);
+        window.history.pushState({}, '', url);
+    }
+
+    // 3. 页面加载时：回显 + 自动查询
     window.addEventListener('DOMContentLoaded', function() {
         setSelectValue('classname', 'class_id');
         setSelectValue('week', 'week');
+
+        // 如果URL有参数，自动查询
+        const classId = document.getElementById("classname").value;
+        const week = document.getElementById("week").value;
+        if (classId && week) {
+            loadSchedule();
+        }
+    });
+
+    // 4. 查询按钮点击事件
+    document.getElementById("queryBtn").addEventListener("click", function() {
+        loadSchedule();
+    });
+
+    // 5. 打开添加弹窗
+    document.querySelector("#addBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelector(".modal-overlay").style.visibility = "visible";
+    });
+
+    // 6. 确认添加课程
+    document.getElementById("confirmModalBtn").addEventListener("click", async function (e) {
+        const class_id = document.getElementById("class_id").value;
+        const course_name = document.getElementById("course_name").value;
+        const start_week = document.getElementById("start_week").value;
+        const end_week = document.getElementById("end_week").value;
+        const period = document.getElementById("period").value;
+
+        // 校验
+        if (!class_id || !course_name || !start_week || !end_week || !period) {
+            alert("请填写完整信息");
+            return;
+        }
+
+        console.log("添加课程:", {class_id, course_name, start_week, end_week, period});
+
+        const response = await fetch("/schedule", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                class_id: class_id,
+                course_name: course_name,
+                start_week: start_week,
+                end_week: end_week,
+                period: period
+            })
+        });
+
+        if (response.ok) {
+            alert("添加成功！");
+            // 关闭弹窗
+            document.querySelector(".modal-overlay").style.visibility = "hidden";
+            // 清空表单
+            document.getElementById("course_name").value = "";
+            document.getElementById("start_week").value = "";
+            document.getElementById("end_week").value = "";
+            // 重新加载课表
+            await loadSchedule();
+        } else {
+            alert("添加失败");
+        }
     });
 </script>
 </html>
