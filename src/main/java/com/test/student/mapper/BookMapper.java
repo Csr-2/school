@@ -1,4 +1,4 @@
-package com.test.student.dao;
+package com.test.student.mapper;
 
 import com.test.student.entity.Book;
 import org.apache.ibatis.annotations.Mapper;

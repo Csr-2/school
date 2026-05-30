@@ -1,18 +1,14 @@
 package com.test.student.controller;
 
 import com.test.student.common.Result;
-import com.test.student.dao.TeacherMapper;
+import com.test.student.mapper.TeacherMapper;
 import com.test.student.entity.Teacher;
 import com.test.student.entity.User;
-import com.test.student.dao.UserMapper;
+import com.test.student.mapper.UserMapper;
 import com.test.student.service.MD5Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 //直接跳转html
 @RestController

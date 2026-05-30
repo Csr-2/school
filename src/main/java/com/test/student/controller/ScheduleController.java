@@ -1,7 +1,7 @@
 package com.test.student.controller;
 
 import com.test.student.common.Result;
-import com.test.student.dao.BIaoMapper;
+import com.test.student.mapper.BIaoMapper;
 import com.test.student.entity.Biaoge;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;

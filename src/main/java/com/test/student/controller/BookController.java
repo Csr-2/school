@@ -1,6 +1,6 @@
 package com.test.student.controller;
 
-import com.test.student.dao.BookMapper;
+import com.test.student.mapper.BookMapper;
 import com.test.student.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

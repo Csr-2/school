@@ -1,11 +1,10 @@
-package com.test.student.dao;
+package com.test.student.mapper;
 
 import com.test.student.entity.Grades;
 import com.test.student.entity.Score;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface ScoreMapper {
