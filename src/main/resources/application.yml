@@ -21,3 +21,7 @@ mybatis:
 logging:
   level:
     com.test.student.mapper: DEBUG
+
+jwt:
+  secret: YTJiM2M0ZDVlNmY3ZzhoOWkwajFrMmwzbTRuNW82cDdxOHI5czB0MXUydjN3NHg1
+  expiration: 86400000
